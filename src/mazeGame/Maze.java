@@ -1,4 +1,4 @@
-package main;
+package mazeGame;
 
 import edu.princeton.cs.algs4.Graph;
 
@@ -7,8 +7,7 @@ public class Maze {
 
 	Maze(int size) {
 
-		mazeHolder = MazeGenerator.newMaze();
-
+		mazeHolder = MazeGenerator.newMaze(size);
 	}
 
 }
