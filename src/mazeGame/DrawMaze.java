@@ -23,21 +23,22 @@ public class DrawMaze {
 		for (int row = 0; row < rowLength; row++) {
 			for (int col = 0; col < rowLength; col++) {
 
-				if (maze.isOccupied(col, row)) {
+				if (maze.isVisited(col, row)) {
 					StdDraw.setPenColor(StdDraw.WHITE);
-					StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.45);
-					StdDraw.setPenColor(StdDraw.GREEN);
-					StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.30);
-				} else if (maze.isVisited(col, row)) {
-					StdDraw.setPenColor(StdDraw.WHITE);
-					StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.45);
+
 				} else {
 					StdDraw.setPenColor(StdDraw.BLACK);
-					StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.45);
 				}
+				StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.45);
+
 			}
+
 		}
 
+		int col = maze.getCurrentColumn();
+		int row = maze.getCurrentRow();
+		StdDraw.setPenColor(StdDraw.GREEN);
+		StdDraw.filledSquare(col + gapSize, rowLength - row - gapSize, 0.30);
 	}
 
 }

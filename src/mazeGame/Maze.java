@@ -24,4 +24,14 @@ public class Maze {
 			return false;
 	}
 
+	public int getCurrentColumn() {
+
+		return (int) (Math.sqrt(mazeHolder.V()) - 1);
+	}
+
+	public int getCurrentRow() {
+
+		return (int) (Math.sqrt(mazeHolder.V()) - 1);
+	}
+
 }
