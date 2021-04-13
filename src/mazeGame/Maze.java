@@ -6,8 +6,22 @@ public class Maze {
 	Graph mazeHolder;
 
 	Maze(int size) {
-
 		mazeHolder = MazeGenerator.newMaze(size);
+
+	}
+
+	public boolean isVisited(int col, int row) {
+		if (Math.sqrt(mazeHolder.V()) - 1 == row)
+			return true;
+
+		return false;
+	}
+
+	public boolean isOccupied(int column, int row) {
+		if (column == row && column == Math.sqrt(mazeHolder.V()) - 1)
+			return true;
+		else
+			return false;
 	}
 
 }
