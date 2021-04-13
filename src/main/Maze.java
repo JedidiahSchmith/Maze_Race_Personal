@@ -3,11 +3,11 @@ package main;
 import edu.princeton.cs.algs4.Graph;
 
 public class Maze {
-	Graph mazeHoler;
+	Graph mazeHolder;
 
 	Maze(int size) {
 
-		mazeHoler = MazeGenerator.newMaze();
+		mazeHolder = MazeGenerator.newMaze();
 
 	}
 
