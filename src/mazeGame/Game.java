@@ -8,6 +8,5 @@ public class Game {
 		Maze maze = new Maze(size);
 
 		DrawMaze window = new DrawMaze(maze);
-		System.out.println(maze.mazeHolder.toString());
 	}
 }
