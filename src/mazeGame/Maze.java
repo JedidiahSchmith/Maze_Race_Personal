@@ -1,50 +1,53 @@
 package mazeGame;
 
+import java.util.Hashtable;
+
 import edu.princeton.cs.algs4.Graph;
 
 public class Maze {
-	Graph mazeHolder;
+	private Graph mazeGraph;
 
 	private int playerCurrentColumn;
 	private int playerCurrentRow;
 	private int computerCurrentColumn;
 	private int computerCurrentRow;
 
-	private boolean[][] visited;
+	private Hashtable<Integer, Boolean> known;
 
 	Maze(int size) {
-		mazeHolder = MazeGenerator.newMaze(size);
-		playerCurrentColumn = (int) (Math.sqrt(mazeHolder.V()) - 4);
-		playerCurrentRow = (int) (Math.sqrt(mazeHolder.V()) - 2);
-
-		computerCurrentColumn = (int) (Math.sqrt(mazeHolder.V()) - 1);
-		computerCurrentRow = (int) (Math.sqrt(mazeHolder.V()) - 3);
-
-		visited = new boolean[(int) Math.sqrt(mazeHolder.V())][(int) Math.sqrt(mazeHolder.V())];
-
-		visited[visited.length - 1][visited.length - 1] = true;
-
-		visited[visited.length - 3][visited.length - 1] = true;
-		visited[visited.length - 1][visited.length - 3] = true;
-		visited[visited.length - 1][visited.length - 2] = true;
-		visited[visited.length - 2][visited.length - 1] = true;
-		visited[visited.length - 3][visited.length - 2] = true;
-		visited[visited.length - 1][visited.length - 4] = true;
-		
-		visited[visited.length - 3][visited.length - 3] = true;
-		visited[visited.length - 1][visited.length - 5] = true;		
-		visited[visited.length - 2][visited.length - 4] = true;		
-		
-		
+		makeMaze(size, 0, 0, 0, 0);
 	}
 
-	public boolean isVisited(int col, int row) {
-		if ((playerCurrentColumn == col && playerCurrentRow == row)
-				|| (computerCurrentColumn == col && computerCurrentRow == row))
-			return true;
-		else
-			return visited[col][row];
+	Maze(int size, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn, int computerCurrentRow) {
+		makeMaze(size, playerCurrentColumn, playerCurrentRow, computerCurrentColumn, computerCurrentRow);
+	}
 
+	private void makeMaze(int size, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn,
+			int computerCurrentRow) {
+
+		mazeGraph = MazeGenerator.newMaze(size);
+		{
+			int width = (int) (Math.sqrt(mazeGraph.V()) - 1);
+			if (playerCurrentColumn > width || playerCurrentRow > width || computerCurrentColumn > width
+					|| computerCurrentRow > width)
+				throw new IllegalArgumentException();
+		}
+
+		this.playerCurrentColumn = playerCurrentColumn;
+		this.playerCurrentRow = playerCurrentRow;
+
+		this.computerCurrentColumn = computerCurrentColumn;//
+		this.computerCurrentRow = computerCurrentRow;
+
+		known = new Hashtable<Integer, Boolean>(size);
+
+		known.put((computerCurrentColumn * computerCurrentRow + computerCurrentColumn), true);
+		known.put((playerCurrentColumn * playerCurrentRow + playerCurrentColumn), true);
+
+	}
+
+	public boolean isKnown(int col, int row) {
+		return known.contains(col * row + col);
 	}
 
 	public int getPlayerCurrentColumn() {
@@ -63,6 +66,63 @@ public class Maze {
 
 	public int getComputerCurrentRow() {
 		return computerCurrentRow;
+	}
+
+	public void moveComputer(Direction direction) {
+
+		switch (direction) {
+		case UP:
+			computerCurrentRow--;
+			break;
+		case RIGHT:
+			computerCurrentColumn++;
+			break;
+		case DOWN:
+			computerCurrentRow++;
+			break;
+		case LEFT:
+			computerCurrentColumn--;
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+
+		updateKnown();
+	}
+
+	public void movePlayer(Direction direction) {
+
+		switch (direction) {
+		case UP:
+			playerCurrentRow--;
+			break;
+		case RIGHT:
+			playerCurrentColumn++;
+			break;
+		case DOWN:
+			playerCurrentRow++;
+			break;
+		case LEFT:
+			playerCurrentColumn--;
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+
+		updateKnown();
+	}
+
+	private void updateKnown() {
+		for (int vertex : mazeGraph.adj(computerCurrentColumn * computerCurrentRow + computerCurrentColumn)) {
+			known.put(vertex, true);
+		}
+		for (int vertex : mazeGraph.adj(playerCurrentColumn * playerCurrentRow + playerCurrentColumn))
+			known.put(vertex, true);
+
+	}
+
+	public Graph getMazeHolder() {
+		return mazeGraph;
 	}
 
 }
