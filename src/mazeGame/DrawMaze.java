@@ -51,6 +51,11 @@ public class DrawMaze {
 		} else {
 			StdDraw.filledSquare(computerColumn + gapSize, rowLength - computerRow - gapSize, 0.30);
 		}
+		StdDraw.setPenColor(StdDraw.YELLOW);
+		StdDraw.filledSquare(6 + gapSize, rowLength - 8 - gapSize, 0.45);
+
+		StdDraw.setPenColor(StdDraw.GREEN);
+		StdDraw.filledSquare(playerColumn + gapSize, rowLength - playerRow - gapSize, 0.30);
 	}
 
 }
