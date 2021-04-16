@@ -3,9 +3,12 @@ package mazeGame;
 import java.util.Hashtable;
 
 import edu.princeton.cs.algs4.Graph;
+import usefulMethods.UsefulMethods;
 
 public class Maze {
 	private Graph mazeGraph;
+	private int width;
+	private int size;
 
 	private int playerCurrentColumn;
 	private int playerCurrentRow;
@@ -14,22 +17,26 @@ public class Maze {
 
 	private Hashtable<Integer, Boolean> known;
 
-	Maze(int size) {
-		makeMaze(size, 0, 0, 0, 0);
+	Maze(int width) {
+
+		makeMaze(width, 0, 0, 0, 0);
 	}
 
-	Maze(int size, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn, int computerCurrentRow) {
-		makeMaze(size, playerCurrentColumn, playerCurrentRow, computerCurrentColumn, computerCurrentRow);
+	Maze(int width, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn, int computerCurrentRow) {
+		makeMaze(width, playerCurrentColumn, playerCurrentRow, computerCurrentColumn, computerCurrentRow);
 	}
 
-	private void makeMaze(int size, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn,
+	private void makeMaze(int width, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn,
 			int computerCurrentRow) {
 
-		mazeGraph = MazeGenerator.newMaze(size);
+		this.width = width;
+		size = width * width;
+
+		mazeGraph = MazeGenerator.newMaze(width);
 		{
-			int width = (int) (Math.sqrt(mazeGraph.V()) - 1);
-			if (playerCurrentColumn > width || playerCurrentRow > width || computerCurrentColumn > width
-					|| computerCurrentRow > width)
+
+			if (playerCurrentColumn >= width || playerCurrentRow >= width || computerCurrentColumn >= width
+					|| computerCurrentRow >= width)
 				throw new IllegalArgumentException();
 		}
 
@@ -39,15 +46,27 @@ public class Maze {
 		this.computerCurrentColumn = computerCurrentColumn;//
 		this.computerCurrentRow = computerCurrentRow;
 
-		known = new Hashtable<Integer, Boolean>(size);
+		known = new Hashtable<Integer, Boolean>(width);
 
-		known.put((computerCurrentColumn * computerCurrentRow + computerCurrentColumn), true);
-		known.put((playerCurrentColumn * playerCurrentRow + playerCurrentColumn), true);
+		known.put(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width), true);
+		known.put(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width), true);
 
 	}
 
 	public boolean isKnown(int col, int row) {
-		return known.contains(col * row + col);
+		try {
+			return known.get(UsefulMethods.colAndRowToVertex(col, row, width));
+		} catch (java.lang.NullPointerException e) {
+			return false;
+		}
+	}
+
+	public boolean isKnown(int vertex) {
+		try {
+			return known.get(vertex);
+		} catch (java.lang.NullPointerException e) {
+			return false;
+		}
 	}
 
 	public int getPlayerCurrentColumn() {
@@ -94,35 +113,55 @@ public class Maze {
 
 		switch (direction) {
 		case UP:
-			playerCurrentRow--;
+			if (--playerCurrentRow < 0) {
+				playerCurrentRow++;
+				return;
+			}
 			break;
 		case RIGHT:
-			playerCurrentColumn++;
+			if (++playerCurrentColumn == width) {
+				playerCurrentColumn--;
+				return;
+			}
 			break;
 		case DOWN:
-			playerCurrentRow++;
+			if (++playerCurrentRow == width) {
+				playerCurrentRow--;
+				return;
+			}
 			break;
 		case LEFT:
-			playerCurrentColumn--;
+			if (--playerCurrentColumn < 0) {
+				playerCurrentColumn++;
+				return;
+			}
 			break;
 		default:
 			throw new IllegalArgumentException();
 		}
-
+		moveComputer(direction);
 		updateKnown();
 	}
 
 	private void updateKnown() {
-		for (int vertex : mazeGraph.adj(computerCurrentColumn * computerCurrentRow + computerCurrentColumn)) {
-			known.put(vertex, true);
+		for (int vertex : mazeGraph
+				.adj(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width))) {
+			if (!isKnown(vertex))
+				known.put(vertex, true);
 		}
-		for (int vertex : mazeGraph.adj(playerCurrentColumn * playerCurrentRow + playerCurrentColumn))
-			known.put(vertex, true);
-
+		for (int vertex : mazeGraph
+				.adj(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width))) {
+			if (!isKnown(vertex))
+				known.put(vertex, true);
+		}
 	}
 
 	public Graph getMazeHolder() {
 		return mazeGraph;
+	}
+
+	public int getWidth() {
+		return width;
 	}
 
 }

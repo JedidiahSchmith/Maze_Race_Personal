@@ -2,13 +2,12 @@ package mazeGame;
 
 public class Game {
 	public static void main(String[] nil) {
-		int width = 5;
+		int width = 50;
 		int size = width * width;
 
-		Maze maze = new Maze(size);
+		Maze maze = new Maze(width);
 
-		DrawMaze.draw(maze);
-		maze.moveComputer(Direction.RIGHT);
-		DrawMaze.draw(maze);
+		DrawMaze.runGame(maze);
+
 	}
 }
