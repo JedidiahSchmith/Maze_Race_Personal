@@ -183,4 +183,7 @@ public class Maze {
 		return UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width);
 	}
 
+	
+	
+	
 }
