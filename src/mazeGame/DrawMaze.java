@@ -1,11 +1,16 @@
 package mazeGame;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import edu.princeton.cs.algs4.StdDraw;
 import usefulMethods.UsefulMethods;
 
 public class DrawMaze {
+
+	private static final Color BACKGROUND_COLOR = StdDraw.WHITE;
+	private static final Color PLAYER_COLOR = StdDraw.GREEN;
+	private static final Color COMPUTER_COLOR = StdDraw.RED;
 
 	public static void runGame(Maze maze) {
 		Direction direction = null;
@@ -64,18 +69,21 @@ public class DrawMaze {
 		double gridSquareSize = 0.45;
 		double playerSquareSize = 0.30;
 
-		StdDraw.setPenColor(StdDraw.WHITE);
+		StdDraw.setPenColor(BACKGROUND_COLOR);
 		int[] address = new int[2];
 
 		address = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
 		if (maze.isKnown(address[0], address[1])) {
-			StdDraw.setPenColor(StdDraw.WHITE);
+			StdDraw.setPenColor(BACKGROUND_COLOR);
+			if (computerCurrentVertex == maze.getGoalVertex())
+				StdDraw.setPenColor(BACKGROUND_COLOR);
+
 			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 		}
 
 		address = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
 		if (maze.isKnown(address[0], address[1])) {
-			StdDraw.setPenColor(StdDraw.WHITE);
+			StdDraw.setPenColor(BACKGROUND_COLOR);
 			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 		}
 
@@ -83,7 +91,7 @@ public class DrawMaze {
 		for (int vertix : maze.getMazeHolder().adj(computerCurrentVertex)) {
 			address = UsefulMethods.vertexToArray(vertix, mazeWidth);
 			if (maze.isKnown(address[0], address[1])) {
-				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.setPenColor(BACKGROUND_COLOR);
 				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 			}
 		}
@@ -93,7 +101,7 @@ public class DrawMaze {
 			address = UsefulMethods.vertexToArray(vertix, mazeWidth);
 
 			if (maze.isKnown(address[0], address[1])) {
-				StdDraw.setPenColor(StdDraw.WHITE);
+				StdDraw.setPenColor(BACKGROUND_COLOR);
 				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 			}
 		}
@@ -103,11 +111,11 @@ public class DrawMaze {
 		int computerColumn = maze.getComputerCurrentColumn();
 		int computerRow = maze.getComputerCurrentRow();
 		// Draws player
-		StdDraw.setPenColor(StdDraw.GREEN);
+		StdDraw.setPenColor(PLAYER_COLOR);
 		StdDraw.filledSquare(playerColumn + gapSize, mazeWidth - playerRow - gapSize, playerSquareSize);
 
 		// Draws computer If on same square, computer and player will share it
-		StdDraw.setPenColor(StdDraw.RED);
+		StdDraw.setPenColor(COMPUTER_COLOR);
 		if (computerColumn == playerColumn && computerRow == playerRow) {
 			StdDraw.filledRectangle(computerColumn + gapSize + playerSquareSize / 2, mazeWidth - computerRow - gapSize,
 					playerSquareSize / 2, playerSquareSize);

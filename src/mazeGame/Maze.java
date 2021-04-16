@@ -14,7 +14,7 @@ public class Maze {
 	private int playerCurrentRow;
 	private int computerCurrentColumn;
 	private int computerCurrentRow;
-
+	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
 
 	Maze(int width) {
@@ -31,6 +31,8 @@ public class Maze {
 
 		this.width = width;
 		size = width * width;
+
+		goalVertex = (int) (Math.random() * 25);
 
 		mazeGraph = MazeGenerator.noWallsMaze(width);
 		{
@@ -163,6 +165,10 @@ public class Maze {
 		}
 	}
 
+	public int getGoalVertex() {
+		return goalVertex;
+	}
+
 	public Graph getMazeHolder() {
 		return mazeGraph;
 	}
@@ -183,7 +189,4 @@ public class Maze {
 		return UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width);
 	}
 
-	
-	
-	
 }
