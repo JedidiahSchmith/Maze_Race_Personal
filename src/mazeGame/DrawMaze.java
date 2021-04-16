@@ -60,60 +60,110 @@ public class DrawMaze {
 
 	public static void draw(Maze maze) {
 		int mazeWidth = maze.getWidth();
-		double gapSize = 0.5;
+		double radiusOfSquare = 0.5;
 
 		int computerCurrentVertex = maze.getComputerVertex();
 		int playerCurrentVertex = maze.getPlayerVertex();
 
 		double gridSquareSize = 0.45;
+
 		double playerSquareSize = 0.30;
 
 		StdDraw.setPenColor(BACKGROUND_COLOR);
-		int[] address = new int[2];
+		int[] currentAddress = new int[2];
+		int[] adjecentAddress = new int[2];
+		double[][] rectangleArray = new double[4][4];
 
-		//colors the goal
-		address = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
-		if (maze.isKnown(address[0], address[1])) {
+		// colors the goal
+		currentAddress = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
+		if (maze.isKnown(currentAddress[0], currentAddress[1])) {
 			StdDraw.setPenColor(BACKGROUND_COLOR);
 			if (computerCurrentVertex == maze.getGoalVertex())
 				StdDraw.setPenColor(GOAL_COLOR);
 
-			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
-		}		
-		address = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
-		if (maze.isKnown(address[0], address[1])) {
-			StdDraw.setPenColor(BACKGROUND_COLOR);
-
-			if (computerCurrentVertex == maze.getGoalVertex())
-				StdDraw.setPenColor(GOAL_COLOR);
-
-			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
+			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, mazeWidth - currentAddress[1] - radiusOfSquare,
+					gridSquareSize);
 		}
-		
+		currentAddress = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
+		if (maze.isKnown(currentAddress[0], currentAddress[1])) {
+			StdDraw.setPenColor(BACKGROUND_COLOR);
+
+			if (computerCurrentVertex == maze.getGoalVertex())
+				StdDraw.setPenColor(GOAL_COLOR);
+
+			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, mazeWidth - currentAddress[1] - radiusOfSquare,
+					gridSquareSize);
+		}
+
 		// checks if the vertices around the computer are known
 		for (int vertix : maze.getMazeHolder().adj(computerCurrentVertex)) {
-			address = UsefulMethods.vertexToArray(vertix, mazeWidth);
-			if (maze.isKnown(address[0], address[1])) {
-				StdDraw.setPenColor(BACKGROUND_COLOR);
-
-				if (UsefulMethods.colAndRowToVertex(address[0], address[1], mazeWidth) == maze.getGoalVertex())
+			adjecentAddress = UsefulMethods.vertexToArray(vertix, mazeWidth);
+			if (maze.isKnown(adjecentAddress[0], adjecentAddress[1])) {
+				if (UsefulMethods.colAndRowToVertex(adjecentAddress[0], adjecentAddress[1], mazeWidth) == maze
+						.getGoalVertex()) {
 					StdDraw.setPenColor(GOAL_COLOR);
+					StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare,
+							mazeWidth - adjecentAddress[1] - radiusOfSquare, gridSquareSize);
 
-				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
+					currentAddress = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
+					StdDraw.setPenColor(BACKGROUND_COLOR);
+					StdDraw.filledSquare(currentAddress[0] + radiusOfSquare,
+							mazeWidth - currentAddress[1] - radiusOfSquare, gridSquareSize);
+				} else {
+					StdDraw.setPenColor(BACKGROUND_COLOR);
+					// StdDraw.filledRectangle(computerCurrentVertex,
+					// playerCurrentVertex,gridSquareSize, gridSquareSize);
+				}
 			}
 		}
 
-		// checks if the vertices around the player are known
+		// checks if the vertices around the player are known and draws them in
+		currentAddress = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
+		// forLoop:
 		for (int vertix : maze.getMazeHolder().adj(playerCurrentVertex)) {
-			address = UsefulMethods.vertexToArray(vertix, mazeWidth);
+			adjecentAddress = UsefulMethods.vertexToArray(vertix, mazeWidth);
 
-			if (maze.isKnown(address[0], address[1])) {
-				StdDraw.setPenColor(BACKGROUND_COLOR);
+			if (maze.isKnown(adjecentAddress[0], adjecentAddress[1])) {
 
-				if (UsefulMethods.colAndRowToVertex(address[0], address[1], mazeWidth) == maze.getGoalVertex())
+				if (UsefulMethods.colAndRowToVertex(adjecentAddress[0], adjecentAddress[1], mazeWidth) == maze
+						.getGoalVertex()) {
 					StdDraw.setPenColor(GOAL_COLOR);
+				} else {
+					StdDraw.setPenColor(BACKGROUND_COLOR);
+				}
 
-				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
+				// fills in boarder between adjacent squares
+				{
+					// following Comments apply to first iteration only
+
+					// corner 1 x value
+					rectangleArray[0][0] = currentAddress[0];
+					// corner 1 y value
+					rectangleArray[1][0] = mazeWidth - currentAddress[1];
+
+					// corner 2 x value
+					rectangleArray[0][1] = adjecentAddress[0];
+					// corner 2 y value
+					rectangleArray[1][1] = mazeWidth - adjecentAddress[1];
+
+					// corner 3 x value
+					rectangleArray[0][2] = currentAddress[0] + gridSquareSize;
+					// corner 3 y value
+					rectangleArray[1][3] = mazeWidth - currentAddress[1];
+
+					// corner 4 x value
+					rectangleArray[0][3] = adjecentAddress[0] + gridSquareSize;
+					// corner 4 y value
+					rectangleArray[1][2] = mazeWidth - adjecentAddress[1];
+
+					StdDraw.filledPolygon(rectangleArray[0], rectangleArray[1]);
+				}
+
+				// draws adjacent squares
+				// StdDraw.filledSquare(adjecentAddress[0] + gapSize, mazeWidth -
+				// adjecentAddress[1] - gapSize, gridSquareSize);
+
+				// break forLoop;
 			}
 		}
 		int playerColumn = maze.getPlayerCurrentColumn();
@@ -123,15 +173,16 @@ public class DrawMaze {
 		int computerRow = maze.getComputerCurrentRow();
 		// Draws player
 		StdDraw.setPenColor(PLAYER_COLOR);
-		StdDraw.filledSquare(playerColumn + gapSize, mazeWidth - playerRow - gapSize, playerSquareSize);
+		StdDraw.filledSquare(playerColumn + radiusOfSquare, mazeWidth - playerRow - radiusOfSquare, playerSquareSize);
 
 		// Draws computer If on same square, computer and player will share it
 		StdDraw.setPenColor(COMPUTER_COLOR);
 		if (computerColumn == playerColumn && computerRow == playerRow) {
-			StdDraw.filledRectangle(computerColumn + gapSize + playerSquareSize / 2, mazeWidth - computerRow - gapSize,
-					playerSquareSize / 2, playerSquareSize);
+			StdDraw.filledRectangle(computerColumn + radiusOfSquare + playerSquareSize / 2,
+					mazeWidth - computerRow - radiusOfSquare, playerSquareSize / 2, playerSquareSize);
 		} else {
-			StdDraw.filledSquare(computerColumn + gapSize, mazeWidth - computerRow - gapSize, playerSquareSize);
+			StdDraw.filledSquare(computerColumn + radiusOfSquare, mazeWidth - computerRow - radiusOfSquare,
+					playerSquareSize);
 		}
 
 	}

@@ -2,11 +2,10 @@ package mazeGame;
 
 import java.util.Hashtable;
 
-import edu.princeton.cs.algs4.Graph;
 import usefulMethods.UsefulMethods;
 
 public class Maze {
-	private Graph mazeGraph;
+	private GraphWrapper mazeGraph;
 	private int width;
 	private int size;
 
@@ -169,7 +168,7 @@ public class Maze {
 		return goalVertex;
 	}
 
-	public Graph getMazeHolder() {
+	public GraphWrapper getMazeHolder() {
 		return mazeGraph;
 	}
 
