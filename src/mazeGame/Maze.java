@@ -32,21 +32,21 @@ public class Maze {
 		this.width = width;
 		size = width * width;
 
-		goalVertex = (int) (Math.random() * 25);
-
 		mazeGraph = MazeGenerator.noWallsMaze(width);
-		{
 
-			if (playerCurrentColumn >= width || playerCurrentRow >= width || computerCurrentColumn >= width
-					|| computerCurrentRow >= width)
-				throw new IllegalArgumentException();
-		}
+		if (playerCurrentColumn >= width || playerCurrentRow >= width || computerCurrentColumn >= width
+				|| computerCurrentRow >= width)
+			throw new IllegalArgumentException();
 
 		this.playerCurrentColumn = playerCurrentColumn;
 		this.playerCurrentRow = playerCurrentRow;
 
 		this.computerCurrentColumn = computerCurrentColumn;//
 		this.computerCurrentRow = computerCurrentRow;
+
+		do {
+			goalVertex = (int) (Math.random() * 25);
+		} while (goalVertex == getComputerVertex() || goalVertex == getPlayerVertex());
 
 		known = new Hashtable<Integer, Boolean>(width);
 

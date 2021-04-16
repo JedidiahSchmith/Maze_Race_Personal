@@ -11,15 +11,14 @@ public class DrawMaze {
 	private static final Color BACKGROUND_COLOR = StdDraw.WHITE;
 	private static final Color PLAYER_COLOR = StdDraw.GREEN;
 	private static final Color COMPUTER_COLOR = StdDraw.RED;
+	private static final Color GOAL_COLOR = StdDraw.YELLOW;
 
 	public static void runGame(Maze maze) {
 		Direction direction = null;
-		boolean gameRunning = true;
 		boolean aKeyIsPressedDown = false;
 		boolean directionSet = false;
 
 		int rowLength = (int) Math.sqrt(maze.getMazeHolder().V());
-		double gapSize = 0.5;
 
 		StdDraw.clear();
 		StdDraw.setPenColor(StdDraw.BLACK);
@@ -30,7 +29,7 @@ public class DrawMaze {
 		StdDraw.filledSquare(rowLength / 2.0, rowLength / 2.0, rowLength / 2.0);
 		draw(maze);
 
-		while (gameRunning) {
+		while (maze.getPlayerVertex() != maze.getGoalVertex() || maze.getComputerVertex() != maze.getGoalVertex()) {
 
 			if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT)) {
 				direction = Direction.LEFT;
@@ -72,26 +71,34 @@ public class DrawMaze {
 		StdDraw.setPenColor(BACKGROUND_COLOR);
 		int[] address = new int[2];
 
+		//colors the goal
 		address = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
 		if (maze.isKnown(address[0], address[1])) {
 			StdDraw.setPenColor(BACKGROUND_COLOR);
 			if (computerCurrentVertex == maze.getGoalVertex())
-				StdDraw.setPenColor(BACKGROUND_COLOR);
+				StdDraw.setPenColor(GOAL_COLOR);
 
 			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
-		}
-
+		}		
 		address = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
 		if (maze.isKnown(address[0], address[1])) {
 			StdDraw.setPenColor(BACKGROUND_COLOR);
+
+			if (computerCurrentVertex == maze.getGoalVertex())
+				StdDraw.setPenColor(GOAL_COLOR);
+
 			StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 		}
-
+		
 		// checks if the vertices around the computer are known
 		for (int vertix : maze.getMazeHolder().adj(computerCurrentVertex)) {
 			address = UsefulMethods.vertexToArray(vertix, mazeWidth);
 			if (maze.isKnown(address[0], address[1])) {
 				StdDraw.setPenColor(BACKGROUND_COLOR);
+
+				if (UsefulMethods.colAndRowToVertex(address[0], address[1], mazeWidth) == maze.getGoalVertex())
+					StdDraw.setPenColor(GOAL_COLOR);
+
 				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 			}
 		}
@@ -102,6 +109,10 @@ public class DrawMaze {
 
 			if (maze.isKnown(address[0], address[1])) {
 				StdDraw.setPenColor(BACKGROUND_COLOR);
+
+				if (UsefulMethods.colAndRowToVertex(address[0], address[1], mazeWidth) == maze.getGoalVertex())
+					StdDraw.setPenColor(GOAL_COLOR);
+
 				StdDraw.filledSquare(address[0] + gapSize, mazeWidth - address[1] - gapSize, gridSquareSize);
 			}
 		}
