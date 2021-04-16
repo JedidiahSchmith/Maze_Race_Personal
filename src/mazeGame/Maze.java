@@ -144,13 +144,20 @@ public class Maze {
 	}
 
 	private void updateKnown() {
-		for (int vertex : mazeGraph
-				.adj(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width))) {
+		int computerVertex = getComputerVertex();
+		int playerVertex = getPlayerVertex();
+
+		if (!isKnown(playerVertex))
+			known.put(playerVertex, true);
+
+		if (!isKnown(computerVertex))
+			known.put(computerVertex, true);
+
+		for (int vertex : mazeGraph.adj(getComputerVertex())) {
 			if (!isKnown(vertex))
 				known.put(vertex, true);
 		}
-		for (int vertex : mazeGraph
-				.adj(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width))) {
+		for (int vertex : mazeGraph.adj(getPlayerVertex())) {
 			if (!isKnown(vertex))
 				known.put(vertex, true);
 		}
@@ -162,6 +169,18 @@ public class Maze {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public int getPlayerVertex() {
+		return UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width);
+	}
+
+	public int getComputerVertex() {
+		return UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width);
 	}
 
 }
