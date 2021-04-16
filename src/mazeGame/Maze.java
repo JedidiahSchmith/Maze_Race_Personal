@@ -32,7 +32,7 @@ public class Maze {
 		this.width = width;
 		size = width * width;
 
-		mazeGraph = MazeGenerator.newMaze(width);
+		mazeGraph = MazeGenerator.noWallsMaze(width);
 		{
 
 			if (playerCurrentColumn >= width || playerCurrentRow >= width || computerCurrentColumn >= width

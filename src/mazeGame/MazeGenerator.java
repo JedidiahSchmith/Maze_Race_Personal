@@ -14,13 +14,12 @@ public class MazeGenerator {
 	 * 
 	 */
 
-	public static Graph newMaze(int width) {
+	public static Graph noWallsMaze(int width) {
 		Graph graphToReturn = new Graph(width * width);
 		for (int vertex = 0; vertex < graphToReturn.V(); vertex++)
 			for (int adjVertices : UsefulMethods.adjVertices(vertex, width)) {
 				graphToReturn.addEdge(vertex, adjVertices);
 			}
-		// System.out.println(graphToReturn);
 		return graphToReturn;
 	}
 
