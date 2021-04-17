@@ -1,5 +1,6 @@
 package mazeGame;
 
+import edu.princeton.cs.algs4.Graph;
 import usefulMethods.UsefulMethods;
 
 public class MazeGenerator {
@@ -13,8 +14,8 @@ public class MazeGenerator {
 	 * 
 	 */
 
-	public static GraphWrapper noWallsMaze(int width) {
-		GraphWrapper graphToReturn = new GraphWrapper(width * width);
+	public static Graph noWallsMaze(int width) {
+		Graph graphToReturn = new Graph(width * width);
 		for (int vertex = 0; vertex < graphToReturn.V(); vertex++)
 			for (int adjVertices : UsefulMethods.adjVertices(vertex, width)) {
 				graphToReturn.addEdge(vertex, adjVertices);

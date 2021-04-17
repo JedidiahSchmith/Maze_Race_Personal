@@ -29,7 +29,7 @@ public class DrawMaze {
 		StdDraw.filledSquare(rowLength / 2.0, rowLength / 2.0, rowLength / 2.0);
 		draw(maze);
 
-		while (maze.getPlayerVertex() != maze.getGoalVertex() || maze.getComputerVertex() != maze.getGoalVertex()) {
+		while (maze.getPlayerVertex() != maze.getGoalVertex() && maze.getComputerVertex() != maze.getGoalVertex()) {
 
 			if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT)) {
 				direction = Direction.LEFT;
@@ -72,7 +72,6 @@ public class DrawMaze {
 		StdDraw.setPenColor(BACKGROUND_COLOR);
 		int[] currentAddress = new int[2];
 		int[] adjecentAddress = new int[2];
-		double[][] rectangleArray = new double[4][4];
 
 		// colors the goal
 		currentAddress = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
@@ -87,8 +86,7 @@ public class DrawMaze {
 		currentAddress = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
 		if (maze.isKnown(currentAddress[0], currentAddress[1])) {
 			StdDraw.setPenColor(BACKGROUND_COLOR);
-
-			if (computerCurrentVertex == maze.getGoalVertex())
+			if (playerCurrentVertex == maze.getGoalVertex())
 				StdDraw.setPenColor(GOAL_COLOR);
 
 			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, mazeWidth - currentAddress[1] - radiusOfSquare,
@@ -96,79 +94,14 @@ public class DrawMaze {
 		}
 
 		// checks if the vertices around the computer are known
-		for (int vertix : maze.getMazeHolder().adj(computerCurrentVertex)) {
-			adjecentAddress = UsefulMethods.vertexToArray(vertix, mazeWidth);
-			if (maze.isKnown(adjecentAddress[0], adjecentAddress[1])) {
-				if (UsefulMethods.colAndRowToVertex(adjecentAddress[0], adjecentAddress[1], mazeWidth) == maze
-						.getGoalVertex()) {
-					StdDraw.setPenColor(GOAL_COLOR);
-					StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare,
-							mazeWidth - adjecentAddress[1] - radiusOfSquare, gridSquareSize);
-
-					currentAddress = UsefulMethods.vertexToArray(computerCurrentVertex, mazeWidth);
-					StdDraw.setPenColor(BACKGROUND_COLOR);
-					StdDraw.filledSquare(currentAddress[0] + radiusOfSquare,
-							mazeWidth - currentAddress[1] - radiusOfSquare, gridSquareSize);
-				} else {
-					StdDraw.setPenColor(BACKGROUND_COLOR);
-					// StdDraw.filledRectangle(computerCurrentVertex,
-					// playerCurrentVertex,gridSquareSize, gridSquareSize);
-				}
-			}
-		}
+		fillInAroundAgent(maze, computerCurrentVertex, mazeWidth, adjecentAddress, radiusOfSquare, gridSquareSize);
 
 		// checks if the vertices around the player are known and draws them in
-		currentAddress = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
-		// forLoop:
-		for (int vertix : maze.getMazeHolder().adj(playerCurrentVertex)) {
-			adjecentAddress = UsefulMethods.vertexToArray(vertix, mazeWidth);
 
-			if (maze.isKnown(adjecentAddress[0], adjecentAddress[1])) {
+		fillInAroundAgent(maze, playerCurrentVertex, mazeWidth, adjecentAddress, radiusOfSquare, gridSquareSize);
 
-				if (UsefulMethods.colAndRowToVertex(adjecentAddress[0], adjecentAddress[1], mazeWidth) == maze
-						.getGoalVertex()) {
-					StdDraw.setPenColor(GOAL_COLOR);
-				} else {
-					StdDraw.setPenColor(BACKGROUND_COLOR);
-				}
-
-				// fills in boarder between adjacent squares
-				{
-					// following Comments apply to first iteration only
-
-					// corner 1 x value
-					rectangleArray[0][0] = currentAddress[0];
-					// corner 1 y value
-					rectangleArray[1][0] = mazeWidth - currentAddress[1];
-
-					// corner 2 x value
-					rectangleArray[0][1] = adjecentAddress[0];
-					// corner 2 y value
-					rectangleArray[1][1] = mazeWidth - adjecentAddress[1];
-
-					// corner 3 x value
-					rectangleArray[0][2] = currentAddress[0] + gridSquareSize;
-					// corner 3 y value
-					rectangleArray[1][3] = mazeWidth - currentAddress[1];
-
-					// corner 4 x value
-					rectangleArray[0][3] = adjecentAddress[0] + gridSquareSize;
-					// corner 4 y value
-					rectangleArray[1][2] = mazeWidth - adjecentAddress[1];
-
-					StdDraw.filledPolygon(rectangleArray[0], rectangleArray[1]);
-				}
-
-				// draws adjacent squares
-				// StdDraw.filledSquare(adjecentAddress[0] + gapSize, mazeWidth -
-				// adjecentAddress[1] - gapSize, gridSquareSize);
-
-				// break forLoop;
-			}
-		}
 		int playerColumn = maze.getPlayerCurrentColumn();
 		int playerRow = maze.getPlayerCurrentRow();
-
 		int computerColumn = maze.getComputerCurrentColumn();
 		int computerRow = maze.getComputerCurrentRow();
 		// Draws player
@@ -187,4 +120,47 @@ public class DrawMaze {
 
 	}
 
+	private static void fillInAroundAgent(Maze maze, int CurrentVertex, int width, int[] adjecentAddress,
+			double radiusOfSquare, double gridSquareSize) {
+		double neighborDepth = 0.3;
+
+		for (int adjVertix : maze.getMazeHolder().adj(CurrentVertex)) {
+			adjecentAddress = UsefulMethods.vertexToArray(adjVertix, width);
+			if (maze.isKnown(adjecentAddress[0], adjecentAddress[1])) {
+
+				if (UsefulMethods.colAndRowToVertex(adjecentAddress[0], adjecentAddress[1], width) == maze
+						.getGoalVertex()) {
+					StdDraw.setPenColor(GOAL_COLOR);
+				} else {
+					StdDraw.setPenColor(BACKGROUND_COLOR);
+				}
+
+				// removes boarder
+
+				switch (UsefulMethods.relativeLocationOfNeighborVertex(CurrentVertex, adjVertix, width)) {
+				case DOWN:
+					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
+							width - adjecentAddress[1] - radiusOfSquare + neighborDepth, gridSquareSize, neighborDepth);
+					break;
+				case RIGHT:
+					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare + neighborDepth,
+							width - adjecentAddress[1] - radiusOfSquare, neighborDepth, gridSquareSize);
+
+					break;
+				case UP:
+					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
+							width - adjecentAddress[1] - radiusOfSquare - neighborDepth, gridSquareSize, neighborDepth);
+					break;
+				case LEFT:
+					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare - neighborDepth,
+							width - adjecentAddress[1] - radiusOfSquare, neighborDepth, gridSquareSize);
+					break;
+				}
+				// draws adjacent squares
+				StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare, width - adjecentAddress[1] - radiusOfSquare,
+						gridSquareSize);
+			}
+
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package usefulMethods;
 
 import edu.princeton.cs.algs4.Queue;
+import mazeGame.Direction;
 
 public class UsefulMethods {
 
@@ -42,6 +43,31 @@ public class UsefulMethods {
 			throw new IllegalArgumentException();
 
 		return col + (row * width);
+	}
+
+	public static Direction relativeLocationOfNeighborVertex(int currentVertex, int otherVertex, int width) {
+
+		int[] currentAddress = vertexToArray(currentVertex, width);
+		int[] otherAddress = vertexToArray(otherVertex, width);
+
+		int horizontalDistance = currentAddress[0] - otherAddress[0];
+		int verticalDistance = currentAddress[1] - otherAddress[1];
+
+		if (horizontalDistance == 0) {
+			if (verticalDistance == -1) {
+				return Direction.DOWN;
+			} else if (verticalDistance == 1) {
+				return Direction.UP;
+			}
+		} else if (verticalDistance == 0) {
+			if (horizontalDistance == -1) {
+				return Direction.LEFT;
+			} else if (horizontalDistance == 1) {
+				return Direction.RIGHT;
+			}
+		}
+
+		return null;
 	}
 
 }
