@@ -32,16 +32,16 @@ public class DrawMaze {
 		while (maze.getPlayerVertex() != maze.getGoalVertex() && maze.getComputerVertex() != maze.getGoalVertex()) {
 
 			if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT)) {
-				direction = Direction.RIGHT;
-				aKeyIsPressedDown = directionSet = true;
-			} else if (StdDraw.isKeyPressed(KeyEvent.VK_RIGHT)) {
 				direction = Direction.LEFT;
 				aKeyIsPressedDown = directionSet = true;
+			} else if (StdDraw.isKeyPressed(KeyEvent.VK_RIGHT)) {
+				direction = Direction.RIGHT;
+				aKeyIsPressedDown = directionSet = true;
 			} else if (StdDraw.isKeyPressed(KeyEvent.VK_DOWN)) {
-				direction = Direction.UP;
+				direction = Direction.DOWN;
 				aKeyIsPressedDown = directionSet = true;
 			} else if (StdDraw.isKeyPressed(KeyEvent.VK_UP)) {
-				direction = Direction.DOWN;
+				direction = Direction.UP;
 				aKeyIsPressedDown = directionSet = true;
 			} else {
 				aKeyIsPressedDown = false;
@@ -50,7 +50,7 @@ public class DrawMaze {
 			if (!aKeyIsPressedDown) {
 				if (directionSet) {
 					directionSet = false;
-					maze.movePlayer(direction);
+					maze.moveEntity(direction, maze.getPlayer());
 					draw(maze);
 				}
 			}
@@ -100,10 +100,10 @@ public class DrawMaze {
 
 		fillInAroundAgent(maze, playerCurrentVertex, mazeWidth, adjecentAddress, radiusOfSquare, gridSquareSize);
 
-		int playerColumn = maze.getPlayerCurrentColumn();
-		int playerRow = maze.getPlayerCurrentRow();
-		int computerColumn = maze.getComputerCurrentColumn();
-		int computerRow = maze.getComputerCurrentRow();
+		int playerColumn = maze.getPlayer().getCurrentColumn();
+		int playerRow = maze.getPlayer().getCurrentRow();
+		int computerColumn = maze.getComputer().getCurrentColumn();
+		int computerRow = maze.getComputer().getCurrentRow();
 		// Draws player
 		StdDraw.setPenColor(PLAYER_COLOR);
 		StdDraw.filledSquare(playerColumn + radiusOfSquare, playerRow + radiusOfSquare, playerSquareSize);
@@ -137,20 +137,20 @@ public class DrawMaze {
 				// removes boarder
 
 				switch (UsefulMethods.relativeLocationOfNeighborVertex(CurrentVertex, adjVertix, width)) {
-				case DOWN:
+				case UP:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
 							adjecentAddress[1] + radiusOfSquare - neighborDepth, gridSquareSize, neighborDepth);
 					break;
-				case RIGHT:
+				case LEFT:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare + neighborDepth,
 							adjecentAddress[1] + radiusOfSquare, neighborDepth, gridSquareSize);
 
 					break;
-				case UP:
+				case DOWN:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
 							adjecentAddress[1] + radiusOfSquare + neighborDepth, gridSquareSize, neighborDepth);
 					break;
-				case LEFT:
+				case RIGHT:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare - neighborDepth,
 							adjecentAddress[1] + radiusOfSquare, neighborDepth, gridSquareSize);
 					break;

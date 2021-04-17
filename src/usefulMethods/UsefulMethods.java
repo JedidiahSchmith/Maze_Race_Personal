@@ -55,15 +55,15 @@ public class UsefulMethods {
 
 		if (horizontalDistance == 0) {
 			if (verticalDistance == -1) {
-				return Direction.DOWN;
-			} else if (verticalDistance == 1) {
 				return Direction.UP;
+			} else if (verticalDistance == 1) {
+				return Direction.DOWN;
 			}
 		} else if (verticalDistance == 0) {
 			if (horizontalDistance == -1) {
-				return Direction.LEFT;
-			} else if (horizontalDistance == 1) {
 				return Direction.RIGHT;
+			} else if (horizontalDistance == 1) {
+				return Direction.LEFT;
 			}
 		}
 

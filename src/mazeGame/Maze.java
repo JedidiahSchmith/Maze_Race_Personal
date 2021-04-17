@@ -10,9 +10,8 @@ public class Maze {
 	private int width;
 	private int size;
 
-	private Entity player = new Entity();
-	private int computerCurrentColumn;
-	private int computerCurrentRow;
+	private Entity player;
+	private Entity computer;
 	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
 
@@ -37,11 +36,9 @@ public class Maze {
 				|| computerCurrentRow >= width)
 			throw new IllegalArgumentException();
 
-		player.currentColumn = playerCurrentColumn;
-		player.currentRow = playerCurrentRow;
+		player = new Entity(playerCurrentColumn, playerCurrentRow);
 
-		this.computerCurrentColumn = computerCurrentColumn;//
-		this.computerCurrentRow = computerCurrentRow;
+		computer = new Entity(computerCurrentColumn, computerCurrentRow);
 
 		do {
 			goalVertex = (int) (Math.random() * size);
@@ -56,11 +53,9 @@ public class Maze {
 	}
 
 	public boolean isKnown(int col, int row) {
-		try {
-			return known.get(UsefulMethods.colAndRowToVertex(col, row, width));
-		} catch (java.lang.NullPointerException e) {
-			return false;
-		}
+
+		return isKnown(UsefulMethods.colAndRowToVertex(col, row, width));
+
 	}
 
 	public boolean isKnown(int vertex) {
@@ -71,67 +66,33 @@ public class Maze {
 		}
 	}
 
-	public int getPlayerCurrentColumn() {
-
-		return player.currentColumn;
+	public Entity getPlayer() {
+		return player;
 	}
 
-	public int getPlayerCurrentRow() {
-
-		return player.currentRow;
+	public Entity getComputer() {
+		return computer;
 	}
 
-	public int getComputerCurrentColumn() {
-		return computerCurrentColumn;
-	}
-
-	public int getComputerCurrentRow() {
-		return computerCurrentRow;
-	}
-
-	public void moveComputer(Direction direction) {
-
-		switch (direction) {
-		case UP:
-			computerCurrentRow--;
-			break;
-		case RIGHT:
-			computerCurrentColumn++;
-			break;
-		case DOWN:
-			computerCurrentRow++;
-			break;
-		case LEFT:
-			computerCurrentColumn--;
-			break;
-		default:
-			throw new IllegalArgumentException();
-		}
-
-		updateKnown();
-	}
-
-	public void movePlayer(Direction moveDirection) {
-
-		int currentPlayerVertex = player.getVertex();
+	public void moveEntity(Direction moveDirection, Entity entity) {
+		int currentEntityVertex = entity.getVertex();
 
 		Direction relativeDirection;
-		loop: for (int newVertex : mazeGraph.adj(currentPlayerVertex)) {
-			relativeDirection = UsefulMethods.relativeLocationOfNeighborVertex(currentPlayerVertex, newVertex, width);
+		loop: for (int newVertex : mazeGraph.adj(currentEntityVertex)) {
+			relativeDirection = UsefulMethods.relativeLocationOfNeighborVertex(currentEntityVertex, newVertex, width);
 			if (relativeDirection.equals(moveDirection)) {
-				System.out.println(relativeDirection);
 				switch (moveDirection) {
-				case UP:
-					player.currentRow--;
-					break loop;
-				case RIGHT:
-					player.currentColumn--;
-					break loop;
 				case DOWN:
-					player.currentRow++;
+					entity.decrementRow();
 					break loop;
 				case LEFT:
-					player.currentColumn++;
+					entity.decrementColumn();
+					break loop;
+				case UP:
+					entity.incrementRow();
+					break loop;
+				case RIGHT:
+					entity.incrementColumn();
 					break loop;
 				default:
 					throw new IllegalArgumentException();
@@ -184,12 +145,17 @@ public class Maze {
 	}
 
 	public int getComputerVertex() {
-		return UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width);
+		return computer.getVertex();
 	}
 
-	private class Entity {
+	class Entity {
 		private int currentColumn;
 		private int currentRow;
+
+		Entity(int currentColumn, int currentRow) {
+			this.currentColumn = currentColumn;
+			this.currentRow = currentRow;
+		}
 
 		public int getVertex() {
 			return UsefulMethods.colAndRowToVertex(currentColumn, currentRow, width);
@@ -203,6 +169,20 @@ public class Maze {
 			return currentRow;
 		}
 
-	}
+		public void incrementColumn() {
+			currentColumn++;
+		}
 
+		public void decrementColumn() {
+			currentColumn--;
+		}
+
+		public void incrementRow() {
+			currentRow++;
+		}
+
+		public void decrementRow() {
+			currentRow--;
+		}
+	}
 }
