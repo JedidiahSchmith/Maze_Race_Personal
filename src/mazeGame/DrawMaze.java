@@ -32,16 +32,16 @@ public class DrawMaze {
 		while (maze.getPlayerVertex() != maze.getGoalVertex() && maze.getComputerVertex() != maze.getGoalVertex()) {
 
 			if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT)) {
-				direction = Direction.LEFT;
-				aKeyIsPressedDown = directionSet = true;
-			} else if (StdDraw.isKeyPressed(KeyEvent.VK_RIGHT)) {
 				direction = Direction.RIGHT;
 				aKeyIsPressedDown = directionSet = true;
+			} else if (StdDraw.isKeyPressed(KeyEvent.VK_RIGHT)) {
+				direction = Direction.LEFT;
+				aKeyIsPressedDown = directionSet = true;
 			} else if (StdDraw.isKeyPressed(KeyEvent.VK_DOWN)) {
-				direction = Direction.DOWN;
+				direction = Direction.UP;
 				aKeyIsPressedDown = directionSet = true;
 			} else if (StdDraw.isKeyPressed(KeyEvent.VK_UP)) {
-				direction = Direction.UP;
+				direction = Direction.DOWN;
 				aKeyIsPressedDown = directionSet = true;
 			} else {
 				aKeyIsPressedDown = false;
@@ -80,7 +80,7 @@ public class DrawMaze {
 			if (computerCurrentVertex == maze.getGoalVertex())
 				StdDraw.setPenColor(GOAL_COLOR);
 
-			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, mazeWidth - currentAddress[1] - radiusOfSquare,
+			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, currentAddress[1] + radiusOfSquare,
 					gridSquareSize);
 		}
 		currentAddress = UsefulMethods.vertexToArray(playerCurrentVertex, mazeWidth);
@@ -89,7 +89,7 @@ public class DrawMaze {
 			if (playerCurrentVertex == maze.getGoalVertex())
 				StdDraw.setPenColor(GOAL_COLOR);
 
-			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, mazeWidth - currentAddress[1] - radiusOfSquare,
+			StdDraw.filledSquare(currentAddress[0] + radiusOfSquare, currentAddress[1] + radiusOfSquare,
 					gridSquareSize);
 		}
 
@@ -106,16 +106,15 @@ public class DrawMaze {
 		int computerRow = maze.getComputerCurrentRow();
 		// Draws player
 		StdDraw.setPenColor(PLAYER_COLOR);
-		StdDraw.filledSquare(playerColumn + radiusOfSquare, mazeWidth - playerRow - radiusOfSquare, playerSquareSize);
+		StdDraw.filledSquare(playerColumn + radiusOfSquare, playerRow + radiusOfSquare, playerSquareSize);
 
 		// Draws computer If on same square, computer and player will share it
 		StdDraw.setPenColor(COMPUTER_COLOR);
 		if (computerColumn == playerColumn && computerRow == playerRow) {
 			StdDraw.filledRectangle(computerColumn + radiusOfSquare + playerSquareSize / 2,
-					mazeWidth - computerRow - radiusOfSquare, playerSquareSize / 2, playerSquareSize);
+					computerRow + radiusOfSquare, playerSquareSize / 2, playerSquareSize);
 		} else {
-			StdDraw.filledSquare(computerColumn + radiusOfSquare, mazeWidth - computerRow - radiusOfSquare,
-					playerSquareSize);
+			StdDraw.filledSquare(computerColumn + radiusOfSquare, computerRow + radiusOfSquare, playerSquareSize);
 		}
 
 	}
@@ -140,24 +139,24 @@ public class DrawMaze {
 				switch (UsefulMethods.relativeLocationOfNeighborVertex(CurrentVertex, adjVertix, width)) {
 				case DOWN:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
-							width - adjecentAddress[1] - radiusOfSquare + neighborDepth, gridSquareSize, neighborDepth);
+							adjecentAddress[1] + radiusOfSquare - neighborDepth, gridSquareSize, neighborDepth);
 					break;
 				case RIGHT:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare + neighborDepth,
-							width - adjecentAddress[1] - radiusOfSquare, neighborDepth, gridSquareSize);
+							adjecentAddress[1] + radiusOfSquare, neighborDepth, gridSquareSize);
 
 					break;
 				case UP:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare,
-							width - adjecentAddress[1] - radiusOfSquare - neighborDepth, gridSquareSize, neighborDepth);
+							adjecentAddress[1] + radiusOfSquare + neighborDepth, gridSquareSize, neighborDepth);
 					break;
 				case LEFT:
 					StdDraw.filledRectangle(adjecentAddress[0] + radiusOfSquare - neighborDepth,
-							width - adjecentAddress[1] - radiusOfSquare, neighborDepth, gridSquareSize);
+							adjecentAddress[1] + radiusOfSquare, neighborDepth, gridSquareSize);
 					break;
 				}
 				// draws adjacent squares
-				StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare, width - adjecentAddress[1] - radiusOfSquare,
+				StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare, adjecentAddress[1] + radiusOfSquare,
 						gridSquareSize);
 			}
 

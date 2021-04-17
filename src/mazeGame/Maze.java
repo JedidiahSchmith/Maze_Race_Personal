@@ -10,8 +10,7 @@ public class Maze {
 	private int width;
 	private int size;
 
-	private int playerCurrentColumn;
-	private int playerCurrentRow;
+	private Entity player = new Entity();
 	private int computerCurrentColumn;
 	private int computerCurrentRow;
 	private int goalVertex;
@@ -38,14 +37,14 @@ public class Maze {
 				|| computerCurrentRow >= width)
 			throw new IllegalArgumentException();
 
-		this.playerCurrentColumn = playerCurrentColumn;
-		this.playerCurrentRow = playerCurrentRow;
+		player.currentColumn = playerCurrentColumn;
+		player.currentRow = playerCurrentRow;
 
 		this.computerCurrentColumn = computerCurrentColumn;//
 		this.computerCurrentRow = computerCurrentRow;
 
 		do {
-			goalVertex = (int) (Math.random() * 25);
+			goalVertex = (int) (Math.random() * size);
 		} while (goalVertex == getComputerVertex() || goalVertex == getPlayerVertex());
 
 		known = new Hashtable<Integer, Boolean>(width);
@@ -53,6 +52,7 @@ public class Maze {
 		known.put(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width), true);
 		known.put(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width), true);
 
+		updateKnown();
 	}
 
 	public boolean isKnown(int col, int row) {
@@ -73,12 +73,12 @@ public class Maze {
 
 	public int getPlayerCurrentColumn() {
 
-		return playerCurrentColumn;
+		return player.currentColumn;
 	}
 
 	public int getPlayerCurrentRow() {
 
-		return playerCurrentRow;
+		return player.currentRow;
 	}
 
 	public int getComputerCurrentColumn() {
@@ -111,38 +111,36 @@ public class Maze {
 		updateKnown();
 	}
 
-	public void movePlayer(Direction direction) {
+	public void movePlayer(Direction moveDirection) {
 
-		switch (direction) {
-		case UP:
-			if (--playerCurrentRow < 0) {
-				playerCurrentRow++;
-				return;
+		int currentPlayerVertex = player.getVertex();
+
+		Direction relativeDirection;
+		loop: for (int newVertex : mazeGraph.adj(currentPlayerVertex)) {
+			relativeDirection = UsefulMethods.relativeLocationOfNeighborVertex(currentPlayerVertex, newVertex, width);
+			if (relativeDirection.equals(moveDirection)) {
+				System.out.println(relativeDirection);
+				switch (moveDirection) {
+				case UP:
+					player.currentRow--;
+					break loop;
+				case RIGHT:
+					player.currentColumn--;
+					break loop;
+				case DOWN:
+					player.currentRow++;
+					break loop;
+				case LEFT:
+					player.currentColumn++;
+					break loop;
+				default:
+					throw new IllegalArgumentException();
+				}
 			}
-			break;
-		case RIGHT:
-			if (++playerCurrentColumn == width) {
-				playerCurrentColumn--;
-				return;
-			}
-			break;
-		case DOWN:
-			if (++playerCurrentRow == width) {
-				playerCurrentRow--;
-				return;
-			}
-			break;
-		case LEFT:
-			if (--playerCurrentColumn < 0) {
-				playerCurrentColumn++;
-				return;
-			}
-			break;
-		default:
-			throw new IllegalArgumentException();
 		}
-		//moveComputer(direction);
+
 		updateKnown();
+
 	}
 
 	private void updateKnown() {
@@ -182,11 +180,29 @@ public class Maze {
 	}
 
 	public int getPlayerVertex() {
-		return UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width);
+		return player.getVertex();
 	}
 
 	public int getComputerVertex() {
 		return UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width);
+	}
+
+	private class Entity {
+		private int currentColumn;
+		private int currentRow;
+
+		public int getVertex() {
+			return UsefulMethods.colAndRowToVertex(currentColumn, currentRow, width);
+		}
+
+		public int getCurrentColumn() {
+			return currentColumn;
+		}
+
+		public int getCurrentRow() {
+			return currentRow;
+		}
+
 	}
 
 }
