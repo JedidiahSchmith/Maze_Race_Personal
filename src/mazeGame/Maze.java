@@ -52,9 +52,7 @@ public class Maze {
 
 		computer = new Entity(computerCurrentColumn, computerCurrentRow);
 
-		do {
-			goalVertex = (int) (Math.random() * size);
-		} while ((goalVertex == getComputerVertex() || goalVertex == getPlayerVertex()) && width != 1);
+		createGoalVertex();
 
 		known = new Hashtable<Integer, Boolean>(width);
 
@@ -66,6 +64,12 @@ public class Maze {
 		computerCameFromWhenVisited[computer.getVertex()] = computer.getVertex();
 
 		updateKnown();
+	}
+
+	private void createGoalVertex() {
+		do {
+			goalVertex = (int) (Math.random() * size);
+		} while ((goalVertex == getComputerVertex() || goalVertex == getPlayerVertex()) && width != 1);
 	}
 
 	public Direction computersNextMove() {
