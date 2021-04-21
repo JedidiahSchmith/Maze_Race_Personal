@@ -1,7 +1,9 @@
 package mazeGame;
 
+import java.nio.file.Paths;
 import java.util.Hashtable;
 
+import edu.princeton.cs.algs4.BreadthFirstPaths;
 import edu.princeton.cs.algs4.Graph;
 import edu.princeton.cs.algs4.Queue;
 import usefulMethods.UsefulMethods;
@@ -17,7 +19,10 @@ public class Maze {
 	private Hashtable<Integer, Boolean> known;
 
 	private boolean[] computerVisited;
+	private boolean[] playerVisited;
 	private int[] computerCameFromWhenVisited;
+	private boolean computerPathToGoalMade = false;
+	Queue<Integer> computerPathToGoal;
 
 	Maze(int width) {
 
@@ -38,7 +43,7 @@ public class Maze {
 		this.width = width;
 		size = width * width;
 
-		computerVisited = new boolean[size];
+		playerVisited = computerVisited = new boolean[size];
 		computerCameFromWhenVisited = new int[size];
 
 		mazeGraph = MazeGenerator.generateMaze(width);
@@ -57,16 +62,31 @@ public class Maze {
 		known.put(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width), true);
 
 		computerVisited[computer.getVertex()] = true;
+		playerVisited[player.getVertex()] = true;
 		computerCameFromWhenVisited[computer.getVertex()] = computer.getVertex();
 
 		updateKnown();
 	}
 
 	public Direction computersNextMove() {
-		Iterable<Integer> neighbors = mazeGraph.adj(getComputerVertex());
+		if (isGoalKnown()) {
+			if (!computerPathToGoalMade) {
+				computerPathToGoal = new Queue<Integer>();
+				BreadthFirstPaths computerPathToGoalFinder = new BreadthFirstPaths(mazeGraph, getComputerVertex());
+				for (Integer nextVertexToGoal : computerPathToGoalFinder.pathTo(goalVertex)) {
+					computerPathToGoal.enqueue(nextVertexToGoal);
+				}
+				computerPathToGoalMade = true;
+			}
 
+			return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), computerPathToGoal.dequeue(),
+					width);
+		}
+
+		Iterable<Integer> neighbors = mazeGraph.adj(getComputerVertex());
 		for (Integer neighbor : neighbors) {
 			if (!computerVisited[neighbor]) {
+
 				computerVisited[neighbor] = true;
 				computerCameFromWhenVisited[neighbor] = computer.getVertex();
 				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
@@ -74,6 +94,11 @@ public class Maze {
 		}
 		return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(),
 				computerCameFromWhenVisited[computer.getVertex()], width);
+	}
+
+	private boolean isGoalKnown() {
+		int[] goalAddress = UsefulMethods.vertexToArray(goalVertex, width);
+		return isKnown(goalAddress[0], goalAddress[1]);
 	}
 
 	public void moveEntity(Direction moveDirection, Entity entity) {
