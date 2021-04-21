@@ -50,9 +50,9 @@ public class DrawMaze {
 			if (!aKeyIsPressedDown) {
 				if (directionSet) {
 					directionSet = false;
-					maze.moveEntity(direction, maze.getPlayer());
 					// moves computer in random direction every time the player moves
 					maze.moveEntity(maze.computersNextMove(), maze.getComputer());
+					maze.moveEntity(direction, maze.getPlayer());
 					draw(maze);
 				}
 			}
