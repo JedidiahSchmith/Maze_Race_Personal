@@ -18,8 +18,6 @@ public class Maze {
 	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
 
-	private boolean[] computerVisited;
-	private boolean[] playerVisited;
 	private int[] computerCameFromWhenVisited;
 	private boolean computerPathToGoalMade = false;
 	Queue<Integer> computerPathToGoal;
@@ -43,9 +41,6 @@ public class Maze {
 		this.width = width;
 		size = width * width;
 
-		playerVisited = computerVisited = new boolean[size];
-		computerCameFromWhenVisited = new int[size];
-
 		mazeGraph = MazeGenerator.generateMaze(width);
 
 		player = new Entity(playerCurrentColumn, playerCurrentRow);
@@ -59,17 +54,39 @@ public class Maze {
 		known.put(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width), true);
 		known.put(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width), true);
 
-		computerVisited[computer.getVertex()] = true;
-		playerVisited[player.getVertex()] = true;
+		player.setVisited(getPlayerVertex());
+		computer.setVisited(getComputerVertex());
+
+		computerCameFromWhenVisited = new int[size];
+
 		computerCameFromWhenVisited[computer.getVertex()] = computer.getVertex();
 
 		updateKnown();
 	}
 
 	private void createGoalVertex() {
+
 		do {
+			boolean[] goalsBeenBefore = new boolean[size];
 			goalVertex = (int) (Math.random() * size);
+			byte timesLooped = 0;
+			int newVertex = goalVertex;
+			do {
+				goalVertex = newVertex;
+				goalsBeenBefore[goalVertex] = true;
+				timesLooped = 0;
+				for (int vertex : mazeGraph.adj(goalVertex)) {
+					timesLooped++;
+
+					if (!goalsBeenBefore[vertex]) {
+						newVertex = vertex;
+					}
+
+				}
+
+			} while (timesLooped > 1);
 		} while ((goalVertex == getComputerVertex() || goalVertex == getPlayerVertex()) && width != 1);
+
 	}
 
 	public Direction computersNextMove() {
@@ -81,16 +98,19 @@ public class Maze {
 					computerPathToGoal.enqueue(nextVertexToGoal);
 				}
 				computerPathToGoalMade = true;
-			}
+				// first Node returned from goalfinder is the currentNode. Needed to be removed
+				computerPathToGoal.dequeue();
 
+			}
+			computer.setVisited(computer.getVertex());
 			return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), computerPathToGoal.dequeue(),
 					width);
 		}
 
 		Iterable<Integer> neighbors = mazeGraph.adj(getComputerVertex());
 		for (Integer neighbor : neighbors) {
-			if (!playerVisited[neighbor] && !computerVisited[neighbor]) {
-				computerVisited[neighbor] = true;
+			if (!player.getVisited()[neighbor] && !computer.getVisited()[neighbor]) {
+				computer.setVisited(neighbor);
 				computerCameFromWhenVisited[neighbor] = computer.getVertex();
 				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
 			}
@@ -98,8 +118,8 @@ public class Maze {
 
 		for (Integer neighbor : neighbors) {
 
-			if (!computerVisited[neighbor]) {
-				computerVisited[neighbor] = true;
+			if (!computer.getVisited()[neighbor]) {
+				computer.setVisited(neighbor);
 				computerCameFromWhenVisited[neighbor] = computer.getVertex();
 				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
 			}
@@ -115,6 +135,8 @@ public class Maze {
 
 	public void moveEntity(Direction moveDirection, Entity entity) {
 		int currentEntityVertex = entity.getVertex();
+
+		entity.setVisited(currentEntityVertex);
 
 		Direction relativeDirection;
 		loop: for (int newVertex : mazeGraph.adj(currentEntityVertex)) {
@@ -212,10 +234,20 @@ public class Maze {
 	class Entity {
 		private int currentColumn;
 		private int currentRow;
+		private boolean[] visited;
 
 		Entity(int currentColumn, int currentRow) {
 			this.currentColumn = currentColumn;
 			this.currentRow = currentRow;
+			visited = new boolean[size];
+		}
+
+		public boolean[] getVisited() {
+			return visited;
+		}
+
+		public void setVisited(int index) {
+			visited[index] = true;
 		}
 
 		public int getVertex() {

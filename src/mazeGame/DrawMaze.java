@@ -157,9 +157,13 @@ public class DrawMaze {
 							adjecentAddress[1] + radiusOfSquare, neighborDepth, gridSquareSize);
 					break;
 				}
-				// draws adjacent squares
-				StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare, adjecentAddress[1] + radiusOfSquare,
-						gridSquareSize);
+
+				if (maze.getComputer().getVisited()[adjVertix] || maze.getPlayer().getVisited()[adjVertix]) {
+					StdDraw.filledSquare(adjecentAddress[0] + radiusOfSquare, adjecentAddress[1] + radiusOfSquare,
+							gridSquareSize);
+
+				}
+
 			}
 
 		}
