@@ -51,6 +51,8 @@ public class DrawMaze {
 				if (directionSet) {
 					directionSet = false;
 					maze.moveEntity(direction, maze.getPlayer());
+					// moves computer in random direction every time the player moves
+					maze.moveEntity(Direction.values()[(int) (Math.random() * 4)], maze.getComputer());
 					draw(maze);
 				}
 			}
@@ -121,7 +123,7 @@ public class DrawMaze {
 
 	private static void fillInAroundAgent(Maze maze, int CurrentVertex, int width, int[] adjecentAddress,
 			double radiusOfSquare, double gridSquareSize) {
-		double neighborDepth = 0.3;
+		double neighborDepth = 0.275;
 
 		for (int adjVertix : maze.getMazeHolder().adj(CurrentVertex)) {
 			adjecentAddress = UsefulMethods.vertexToArray(adjVertix, width);

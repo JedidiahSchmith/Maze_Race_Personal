@@ -42,7 +42,7 @@ public class Maze {
 
 		do {
 			goalVertex = (int) (Math.random() * size);
-		} while (goalVertex == getComputerVertex() || goalVertex == getPlayerVertex());
+		} while ((goalVertex == getComputerVertex() || goalVertex == getPlayerVertex()) && width != 1);
 
 		known = new Hashtable<Integer, Boolean>(width);
 
