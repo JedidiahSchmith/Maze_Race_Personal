@@ -52,7 +52,7 @@ public class DrawMaze {
 					directionSet = false;
 					maze.moveEntity(direction, maze.getPlayer());
 					// moves computer in random direction every time the player moves
-					maze.moveEntity(Direction.values()[(int) (Math.random() * 4)], maze.getComputer());
+					maze.moveEntity(maze.computersNextMove(), maze.getComputer());
 					draw(maze);
 				}
 			}

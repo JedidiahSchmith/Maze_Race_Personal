@@ -2,7 +2,7 @@ package mazeGame;
 
 public class Game {
 	public static void main(String[] nil) {
-		int width = 5;
+		int width = 25;
 
 		Maze maze = new Maze(width);
 

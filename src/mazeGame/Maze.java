@@ -3,6 +3,7 @@ package mazeGame;
 import java.util.Hashtable;
 
 import edu.princeton.cs.algs4.Graph;
+import edu.princeton.cs.algs4.Queue;
 import usefulMethods.UsefulMethods;
 
 public class Maze {
@@ -14,6 +15,9 @@ public class Maze {
 	private Entity computer;
 	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
+
+	private boolean[] computerVisited;
+	private int[] computerCameFromWhenVisited;
 
 	Maze(int width) {
 
@@ -27,14 +31,17 @@ public class Maze {
 	private void makeMaze(int width, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn,
 			int computerCurrentRow) {
 
-		this.width = width;
-		size = width * width;
-
-		mazeGraph = MazeGenerator.generateMaze(width);
-
 		if (playerCurrentColumn >= width || playerCurrentRow >= width || computerCurrentColumn >= width
 				|| computerCurrentRow >= width)
 			throw new IllegalArgumentException();
+
+		this.width = width;
+		size = width * width;
+
+		computerVisited = new boolean[size];
+		computerCameFromWhenVisited = new int[size];
+
+		mazeGraph = MazeGenerator.generateMaze(width);
 
 		player = new Entity(playerCurrentColumn, playerCurrentRow);
 
@@ -49,29 +56,24 @@ public class Maze {
 		known.put(UsefulMethods.colAndRowToVertex(computerCurrentColumn, computerCurrentRow, width), true);
 		known.put(UsefulMethods.colAndRowToVertex(playerCurrentColumn, playerCurrentRow, width), true);
 
+		computerVisited[computer.getVertex()] = true;
+		computerCameFromWhenVisited[computer.getVertex()] = computer.getVertex();
+
 		updateKnown();
 	}
 
-	public boolean isKnown(int col, int row) {
+	public Direction computersNextMove() {
+		Iterable<Integer> neighbors = mazeGraph.adj(getComputerVertex());
 
-		return isKnown(UsefulMethods.colAndRowToVertex(col, row, width));
-
-	}
-
-	public boolean isKnown(int vertex) {
-		try {
-			return known.get(vertex);
-		} catch (java.lang.NullPointerException e) {
-			return false;
+		for (Integer neighbor : neighbors) {
+			if (!computerVisited[neighbor]) {
+				computerVisited[neighbor] = true;
+				computerCameFromWhenVisited[neighbor] = computer.getVertex();
+				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
+			}
 		}
-	}
-
-	public Entity getPlayer() {
-		return player;
-	}
-
-	public Entity getComputer() {
-		return computer;
+		return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(),
+				computerCameFromWhenVisited[computer.getVertex()], width);
 	}
 
 	public void moveEntity(Direction moveDirection, Entity entity) {
@@ -122,6 +124,28 @@ public class Maze {
 			if (!isKnown(vertex))
 				known.put(vertex, true);
 		}
+	}
+
+	public boolean isKnown(int col, int row) {
+
+		return isKnown(UsefulMethods.colAndRowToVertex(col, row, width));
+
+	}
+
+	public boolean isKnown(int vertex) {
+		try {
+			return known.get(vertex);
+		} catch (java.lang.NullPointerException e) {
+			return false;
+		}
+	}
+
+	public Entity getPlayer() {
+		return player;
+	}
+
+	public Entity getComputer() {
+		return computer;
 	}
 
 	public int getGoalVertex() {
