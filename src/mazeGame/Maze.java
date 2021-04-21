@@ -85,8 +85,16 @@ public class Maze {
 
 		Iterable<Integer> neighbors = mazeGraph.adj(getComputerVertex());
 		for (Integer neighbor : neighbors) {
-			if (!computerVisited[neighbor]) {
+			if (!playerVisited[neighbor] && !computerVisited[neighbor]) {
+				computerVisited[neighbor] = true;
+				computerCameFromWhenVisited[neighbor] = computer.getVertex();
+				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
+			}
+		}
 
+		for (Integer neighbor : neighbors) {
+
+			if (!computerVisited[neighbor]) {
 				computerVisited[neighbor] = true;
 				computerCameFromWhenVisited[neighbor] = computer.getVertex();
 				return UsefulMethods.relativeLocationOfNeighborVertex(getComputerVertex(), neighbor, width);
