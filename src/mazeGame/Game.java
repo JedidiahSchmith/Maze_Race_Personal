@@ -5,13 +5,9 @@ public class Game {
 		boolean playing = true;
 		boolean replay = true;
 		int width = 2;
-		Maze maze = new Maze(width);
-		int playerCol;
-		int playerRow;
-		int computerCol;
-		int computerRow;
+		Maze maze = new Maze(width, null, false);
 
-		boolean keepPlayerPositionBetweenLevels = true;
+		boolean keepPlayerPositionBetweenLevels = false;
 
 		int endGameLevel = 27;
 		endGameLevel = -1;
@@ -26,16 +22,7 @@ public class Game {
 			}
 
 			if (replay) {
-				if (keepPlayerPositionBetweenLevels) {
-					playerCol = maze.getPlayer().getCurrentColumn();
-					playerRow = maze.getPlayer().getCurrentRow();
-					computerCol = maze.getComputer().getCurrentColumn();
-					computerRow = maze.getComputer().getCurrentRow();
-
-					maze = new Maze(width++, playerCol, playerRow, computerCol, computerRow);
-				} else {
-					maze = new Maze(width++);
-				}
+				maze = new Maze(width++, maze, keepPlayerPositionBetweenLevels);
 				DrawMaze.runGame(maze);
 				replay = false;
 			}

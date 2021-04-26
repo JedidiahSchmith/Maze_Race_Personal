@@ -27,9 +27,10 @@ public class DrawMaze {
 		StdDraw.setPenColor();
 		StdDraw.clear();
 		StdDraw.setPenColor(StdDraw.BLACK);
-		StdDraw.text(rowLength * 0.5, rowLength * 1.02, "Maze Race");
-		StdDraw.text(rowLength * 0.8, rowLength * 1.02, "Level " + (maze.getWidth() - 1));
-
+		StdDraw.text(rowLength * 0.4, rowLength * 1.02, "Maze Race");
+		StdDraw.text(rowLength * 0.1, rowLength * 1.02, "Level " + (maze.getWidth() - 1));
+		StdDraw.text(rowLength * 0.8, rowLength * 1.02,
+				String.format("Wins: %d Losses: %d Ties: %d", maze.getWins(), maze.getLosses(), maze.getTies()));
 		StdDraw.filledSquare(rowLength / 2.0, rowLength / 2.0, rowLength / 2.0);
 		draw(maze);
 		while (maze.getPlayerVertex() != maze.getGoalVertex() && maze.getComputerVertex() != maze.getGoalVertex()) {
@@ -88,12 +89,15 @@ public class DrawMaze {
 		switch (winState) {
 		case WIN:
 			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "You win!");
+			maze.setWins(maze.getWins() + 1);
 			break;
 		case LOSE:
 			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "You Lose!");
+			maze.setLosses(maze.getLosses() + 1);
 			break;
 		case TIE:
 			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "It's a Tie!");
+			maze.setTies(maze.getTies() + 1);
 			break;
 
 		}

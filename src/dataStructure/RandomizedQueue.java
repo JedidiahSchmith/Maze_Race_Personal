@@ -19,7 +19,7 @@ public class RandomizedQueue<Type> {
 	}
 
 	public boolean isEmpty() {
-		return size == 0;
+		return Size() == 0;
 	}
 
 	public int Size() {

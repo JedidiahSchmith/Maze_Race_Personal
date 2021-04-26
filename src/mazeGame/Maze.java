@@ -17,21 +17,31 @@ public class Maze {
 	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
 	private boolean inPlay = true;
-	int wins = 0;
-	int losses = 0;
-	int ties = 0;
+	private int wins = 0;
+	private int losses = 0;
+	private int ties = 0;
 
 	private int[] computerCameFromWhenVisited;
 	private boolean computerPathToGoalMade = false;
 	Queue<Integer> computerPathToGoal;
 
-	Maze(int width) {
+	Maze(int width, Maze oldMaze, boolean keepPlayerPositionBetweenLevels) {
+		if (keepPlayerPositionBetweenLevels) {
+			makeMaze(width, oldMaze.getPlayer().getCurrentColumn(), oldMaze.getPlayer().getCurrentRow(),
+					oldMaze.getComputer().getCurrentColumn(), oldMaze.getComputer().getCurrentRow());
+		} else {
+			makeMaze(width, 0, 0, 0, 0);
+		}
+		if (oldMaze == null) {
+			setWins(0);
+			setLosses(0);
+			setTies(0);
 
-		makeMaze(width, 0, 0, 0, 0);
-	}
-
-	Maze(int width, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn, int computerCurrentRow) {
-		makeMaze(width, playerCurrentColumn, playerCurrentRow, computerCurrentColumn, computerCurrentRow);
+		} else {
+			setWins(oldMaze.getWins());
+			setLosses(oldMaze.getLosses());
+			setTies(oldMaze.getTies());
+		}
 	}
 
 	private void makeMaze(int width, int playerCurrentColumn, int playerCurrentRow, int computerCurrentColumn,
@@ -239,6 +249,30 @@ public class Maze {
 
 	public void setInPlay(boolean inPlay) {
 		this.inPlay = inPlay;
+	}
+
+	public int getWins() {
+		return wins;
+	}
+
+	public void setWins(int wins) {
+		this.wins = wins;
+	}
+
+	public int getLosses() {
+		return losses;
+	}
+
+	public void setLosses(int losses) {
+		this.losses = losses;
+	}
+
+	public int getTies() {
+		return ties;
+	}
+
+	public void setTies(int ties) {
+		this.ties = ties;
 	}
 
 	class Entity {
