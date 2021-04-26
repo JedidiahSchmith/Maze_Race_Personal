@@ -1,6 +1,7 @@
 package mazeGame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 import edu.princeton.cs.algs4.StdDraw;
@@ -14,22 +15,32 @@ public class DrawMaze {
 	private static final Color GOAL_COLOR = StdDraw.YELLOW;
 
 	public static void runGame(Maze maze) {
+		StdDraw.enableDoubleBuffering();
 		Direction direction = null;
 		boolean aKeyIsPressedDown = false;
 		boolean directionSet = false;
 
 		int rowLength = (int) Math.sqrt(maze.getMazeHolder().V());
-
-		StdDraw.clear();
-		StdDraw.setPenColor(StdDraw.BLACK);
-		StdDraw.text(0.5, 0.97, "Maze Race");
-
 		StdDraw.setXscale(-0.05 * rowLength, 1.05 * rowLength);
 		StdDraw.setYscale(-0.05 * rowLength, 1.05 * rowLength);
+		StdDraw.setFont();
+		StdDraw.setPenColor();
+		StdDraw.clear();
+		StdDraw.setPenColor(StdDraw.BLACK);
+		StdDraw.text(rowLength * 0.5, rowLength * 1.02, "Maze Race");
+		StdDraw.text(rowLength * 0.8, rowLength * 1.02, "Level " + (maze.getWidth() - 1));
+
 		StdDraw.filledSquare(rowLength / 2.0, rowLength / 2.0, rowLength / 2.0);
 		draw(maze);
-
 		while (maze.getPlayerVertex() != maze.getGoalVertex() && maze.getComputerVertex() != maze.getGoalVertex()) {
+
+			try {
+				// Momentarily pauses thread to save CPU power from unnecessary key event
+				// checks.
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 			if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT)) {
 				direction = Direction.LEFT;
@@ -58,6 +69,51 @@ public class DrawMaze {
 			}
 		}
 
+		WinStatus winState;
+
+		if (maze.getPlayerVertex() == maze.getGoalVertex() && maze.getComputerVertex() == maze.getGoalVertex()) {
+			winState = WinStatus.TIE;
+			StdDraw.setPenColor(GOAL_COLOR);
+		} else if (maze.getPlayerVertex() == maze.getGoalVertex()) {
+			winState = WinStatus.WIN;
+			StdDraw.setPenColor(PLAYER_COLOR);
+		} else {
+			winState = WinStatus.LOSE;
+			StdDraw.setPenColor(COMPUTER_COLOR);
+		}
+
+		double mazeWidth = maze.getWidth();
+		StdDraw.setFont();
+		StdDraw.setFont(new Font("san sarif", Font.BOLD, 50));
+		switch (winState) {
+		case WIN:
+			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "You win!");
+			break;
+		case LOSE:
+			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "You Lose!");
+			break;
+		case TIE:
+			StdDraw.text(mazeWidth / 2, mazeWidth / 2, "It's a Tie!");
+			break;
+
+		}
+		StdDraw.setFont(new Font("san sarif", Font.PLAIN, 20));
+		StdDraw.setPenColor(Color.MAGENTA);
+		StdDraw.text(mazeWidth * 0.5, mazeWidth * 0.3, "Press 'Enter' to go to next level.");
+		StdDraw.show();
+
+		while (maze.isInPlay()) {
+			try {
+				// Momentarily pauses thread to save CPU power from unnecessary key event
+				// checks.
+				Thread.sleep(15);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
+				maze.setInPlay(false);
+			}
+		}
 	}
 
 	public static void draw(Maze maze) {
@@ -118,7 +174,7 @@ public class DrawMaze {
 		} else {
 			StdDraw.filledSquare(computerColumn + radiusOfSquare, computerRow + radiusOfSquare, playerSquareSize);
 		}
-
+		StdDraw.show();
 	}
 
 	private static void fillInAroundAgent(Maze maze, int CurrentVertex, int width, int[] adjecentAddress,
@@ -167,5 +223,9 @@ public class DrawMaze {
 			}
 
 		}
+	}
+
+	private enum WinStatus {
+		WIN, LOSE, TIE;
 	}
 }

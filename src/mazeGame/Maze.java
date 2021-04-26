@@ -1,6 +1,5 @@
 package mazeGame;
 
-import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import edu.princeton.cs.algs4.BreadthFirstPaths;
@@ -17,6 +16,10 @@ public class Maze {
 	private Entity computer;
 	private int goalVertex;
 	private Hashtable<Integer, Boolean> known;
+	private boolean inPlay = true;
+	int wins = 0;
+	int losses = 0;
+	int ties = 0;
 
 	private int[] computerCameFromWhenVisited;
 	private boolean computerPathToGoalMade = false;
@@ -86,7 +89,6 @@ public class Maze {
 
 			} while (timesLooped > 1);
 		} while ((goalVertex == getComputerVertex() || goalVertex == getPlayerVertex()) && width != 1);
-
 	}
 
 	public Direction computersNextMove() {
@@ -229,6 +231,14 @@ public class Maze {
 
 	public int getComputerVertex() {
 		return computer.getVertex();
+	}
+
+	public boolean isInPlay() {
+		return inPlay;
+	}
+
+	public void setInPlay(boolean inPlay) {
+		this.inPlay = inPlay;
 	}
 
 	class Entity {
