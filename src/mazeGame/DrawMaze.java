@@ -183,7 +183,7 @@ public class DrawMaze {
 
 	private static void fillInAroundAgent(Maze maze, int CurrentVertex, int width, int[] adjecentAddress,
 			double radiusOfSquare, double gridSquareSize) {
-		double neighborDepth = 0.275;
+		double neighborDepth = 0.272;
 
 		for (int adjVertix : maze.getMazeHolder().adj(CurrentVertex)) {
 			adjecentAddress = UsefulMethods.vertexToArray(adjVertix, width);
